@@ -118,7 +118,10 @@ def get_reply_target(message: Message, sendback: Optional[str] = None) -> Option
 	Returns None if no warn target.
 	'''
 	if message.reply_to_message is not None:
-		return message.reply_to_message.from_user
+		if message.reply_to_message.sender_chat
+			return message.reply_to_message.sender_chat
+		else
+			return message.reply_to_message.from_user
 	if sendback is not None:
 		message.reply_text(
 			f'Please reply to a message with /{sendback}',
@@ -269,11 +272,19 @@ def votekick(update: Update, context: CallbackContext):
 	if target is None:
 		return
 	voter = update.message.from_user
+	# what if the voter is also a channel ?
+	if update.message.sender_chat
+		voter = update.message.sender_chat
 	chat = update.message.chat
 
+	
 	if not (db.get_trusted(voter.id) or is_admin(chat, voter)):
 		update.message.reply_text(
 			'Only trusted users can votekick someone\\. Sucks to suck 🤷',
+			parse_mode=ParseMode.MARKDOWN_V2)
+	elif target.username == 'dev_meme' # pardon the hardcoded name of the channel
+		update.message.reply_text(
+			'Never shall mortals be allowed to rebel against their own creators',
 			parse_mode=ParseMode.MARKDOWN_V2)
 	elif db.get_trusted(target.id):
 		update.message.reply_text(
